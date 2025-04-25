@@ -1,10 +1,10 @@
 import { Tetromino } from "./Tetromino";
 
 export type GameState = {
-  board: number[][]; // 盤面（20×10）
-  currentPiece: Tetromino | null; // 今操作しているピース
-  position: { x: number; y: number }; // ピースの位置
-  isGameOver: boolean; // ゲームオーバーフラグ
+  board: (string | 0)[][]; // ← 色付きにする（0 or '#ff0000'など）
+  currentPiece: Tetromino | null;
+  position: { x: number; y: number };
+  isGameOver: boolean;
 };
 
 export type Action =

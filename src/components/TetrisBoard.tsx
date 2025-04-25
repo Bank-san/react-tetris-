@@ -19,7 +19,7 @@ const TetrisBoard: React.FC<Props> = ({ gameState }) => {
             value &&
             display[y + position.y]?.[x + position.x] !== undefined
           ) {
-            display[y + position.y][x + position.x] = 2; // 表示用に2にする
+            display[y + position.y][x + position.x] = 2; // 落下中ピースは一時的に「2」に
           }
         });
       });
@@ -28,20 +28,24 @@ const TetrisBoard: React.FC<Props> = ({ gameState }) => {
     return display;
   };
 
+  const renderedBoard = renderBoard();
+
   return (
     <div className="board">
-      {renderBoard()
-        .flat()
-        .map((cell, i) => (
-          <div
-            key={i}
-            className="cell"
-            style={{
-              backgroundColor:
-                cell === 2 ? gameState.currentPiece?.color : "#111",
-            }}
-          />
-        ))}
+      {renderedBoard.flat().map((cell, i) => (
+        <div
+          key={i}
+          className="cell"
+          style={{
+            backgroundColor:
+              typeof cell === "string" // ← 色が入ってたらその色を使う
+                ? cell
+                : cell === 2
+                ? gameState.currentPiece?.color
+                : "#111",
+          }}
+        />
+      ))}
     </div>
   );
 };

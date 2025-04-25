@@ -39,7 +39,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
                 boardX >= 0 &&
                 boardX < newBoard[0].length
               ) {
-                newBoard[boardY][boardX] = 1; // 固定！
+                newBoard[boardY][boardX] = state.currentPiece.color;
               }
             }
           });
