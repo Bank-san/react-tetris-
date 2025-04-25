@@ -18,6 +18,8 @@ const App: React.FC = () => {
         dispatch({ type: "MOVE", direction: "right" });
       } else if (e.key === "ArrowDown") {
         dispatch({ type: "MOVE", direction: "down" });
+      } else if (e.key === "ArrowUp") {
+        dispatch({ type: "ROTATE" });
       }
     };
 
@@ -28,6 +30,7 @@ const App: React.FC = () => {
   return (
     <div>
       <h1>React Tetris</h1>
+      {state.isGameOver && <h2 style={{ color: "red" }}>💀 GAME OVER 💀</h2>}
       <TetrisBoard gameState={state} />
     </div>
   );

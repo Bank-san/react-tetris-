@@ -2,6 +2,7 @@ import { GameState, Action } from "../types/GameState";
 import { getRandomTetromino } from "../utils/randomTetromino";
 import { canMove } from "../utils/canMove";
 import { clearLines } from "../utils/clearLines";
+import { rotate } from "../utils/rotate";
 
 export const initialGameState: GameState = {
   board: Array(20)
@@ -46,11 +47,19 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
         const { newBoard: clearedBoard } = clearLines(newBoard);
 
+        // ✅ 新しいピースを生成
+        const nextPiece = getRandomTetromino();
+        const startPos = { x: 3, y: 0 };
+
+        // ✅ 新しいピースを置けなかったら終了！
+        const gameOver = !canMove(clearedBoard, nextPiece, startPos);
+
         return {
           ...state,
           board: clearedBoard,
-          currentPiece: getRandomTetromino(),
-          position: { x: 3, y: 0 },
+          currentPiece: gameOver ? null : nextPiece,
+          position: startPos,
+          isGameOver: gameOver,
         };
       }
     }
@@ -82,5 +91,25 @@ export function gameReducer(state: GameState, action: Action): GameState {
       };
     default:
       return state;
+
+    case "ROTATE": {
+      if (!state.currentPiece) return state;
+
+      const rotatedShape = rotate(state.currentPiece.shape);
+      const rotatedPiece = {
+        ...state.currentPiece,
+        shape: rotatedShape,
+      };
+
+      // 衝突判定（位置そのままで回転できるか）
+      if (canMove(state.board, rotatedPiece, state.position)) {
+        return {
+          ...state,
+          currentPiece: rotatedPiece,
+        };
+      } else {
+        return state; // 回転できなければ無視
+      }
+    }
   }
 }
