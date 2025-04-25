@@ -5,6 +5,7 @@ export type GameState = {
   currentPiece: Tetromino | null;
   position: { x: number; y: number };
   isGameOver: boolean;
+  score: number;
 };
 
 export type Action =

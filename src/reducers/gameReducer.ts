@@ -11,6 +11,7 @@ export const initialGameState: GameState = {
   position: { x: 3, y: 0 },
   currentPiece: getRandomTetromino(),
   isGameOver: false,
+  score: 0,
 };
 
 export function gameReducer(state: GameState, action: Action): GameState {
@@ -45,7 +46,8 @@ export function gameReducer(state: GameState, action: Action): GameState {
           });
         });
 
-        const { newBoard: clearedBoard } = clearLines(newBoard);
+        const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
+        const scoreDelta = cleared * 100; //消した行数 × 100点
 
         // ✅ 新しいピースを生成
         const nextPiece = getRandomTetromino();
@@ -60,6 +62,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
           currentPiece: gameOver ? null : nextPiece,
           position: startPos,
           isGameOver: gameOver,
+          score: state.score + scoreDelta, //スコア加算処理
         };
       }
     }

@@ -30,6 +30,7 @@ const App: React.FC = () => {
   return (
     <div>
       <h1>React Tetris</h1>
+      <h2>Score: {state.score}</h2>
       {state.isGameOver && <h2 style={{ color: "red" }}>💀 GAME OVER 💀</h2>}
       <TetrisBoard gameState={state} />
     </div>
