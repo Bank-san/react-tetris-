@@ -3,13 +3,18 @@ import { getRandomTetromino } from "../utils/randomTetromino";
 import { canMove } from "../utils/canMove";
 import { clearLines } from "../utils/clearLines";
 import { rotate } from "../utils/rotate";
+import { generateQueue } from "../utils/generateQueue";
+import { TETROMINOES } from "../data/Tetrominoes";
+
+const queue = generateQueue();
 
 export const initialGameState: GameState = {
   board: Array(20)
     .fill(null)
     .map(() => Array(10).fill(0)),
   position: { x: 3, y: 0 },
-  currentPiece: getRandomTetromino(),
+  currentPiece: TETROMINOES[queue[0]],
+  queue: queue.slice(1),
   isGameOver: false,
   score: 0,
 };
@@ -49,11 +54,14 @@ export function gameReducer(state: GameState, action: Action): GameState {
         const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
         const scoreDelta = cleared * 100; //消した行数 × 100点
 
-        // ✅ 新しいピースを生成
-        const nextPiece = getRandomTetromino();
+        let newQueue = [...state.queue];
+        if (newQueue.length <= 1) {
+          newQueue = [...newQueue, ...generateQueue()];
+        }
+        const nextKey = newQueue[0];
+        newQueue = newQueue.slice(1);
+        const nextPiece = TETROMINOES[nextKey];
         const startPos = { x: 3, y: 0 };
-
-        // ✅ 新しいピースを置けなかったら終了！
         const gameOver = !canMove(clearedBoard, nextPiece, startPos);
 
         return {
@@ -63,6 +71,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
           position: startPos,
           isGameOver: gameOver,
           score: state.score + scoreDelta, //スコア加算処理
+          queue: newQueue,
         };
       }
     }

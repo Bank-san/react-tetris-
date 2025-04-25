@@ -6,6 +6,7 @@ export type GameState = {
   position: { x: number; y: number };
   isGameOver: boolean;
   score: number;
+  queue: string[];
 };
 
 export type Action =
