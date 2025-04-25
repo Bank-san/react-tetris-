@@ -1,6 +1,7 @@
 import { GameState, Action } from "../types/GameState";
 import { getRandomTetromino } from "../utils/randomTetromino";
 import { canMove } from "../utils/canMove";
+import { clearLines } from "../utils/clearLines";
 
 export const initialGameState: GameState = {
   board: Array(20)
@@ -21,10 +22,39 @@ export function gameReducer(state: GameState, action: Action): GameState {
       ) {
         return { ...state, position: newPosition };
       } else {
-        // もし動けないならここでピースを固定する処理が必要（今回はまだやらない）
-        return state;
+        if (!state.currentPiece) return state;
+
+        const newBoard = [...state.board.map((row) => [...row])];
+        const { shape } = state.currentPiece;
+
+        shape.forEach((row, y) => {
+          row.forEach((value, x) => {
+            if (value) {
+              const boardY = state.position.y + y;
+              const boardX = state.position.x + x;
+              if (
+                boardY >= 0 &&
+                boardY < newBoard.length &&
+                boardX >= 0 &&
+                boardX < newBoard[0].length
+              ) {
+                newBoard[boardY][boardX] = 1; // 固定！
+              }
+            }
+          });
+        });
+
+        const { newBoard: clearedBoard } = clearLines(newBoard);
+
+        return {
+          ...state,
+          board: clearedBoard,
+          currentPiece: getRandomTetromino(),
+          position: { x: 3, y: 0 },
+        };
       }
     }
+
     case "MOVE": {
       const delta = { x: 0, y: 0 };
       if (action.direction === "left") delta.x = -1;
