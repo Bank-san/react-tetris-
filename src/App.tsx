@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useEffect } from "react";
 import TetrisBoard from "./components/TetrisBoard";
 import { gameReducer, initialGameState } from "./reducers/gameReducer";
 import { useGameLoop } from "./hooks/useGameLoop";
@@ -9,6 +9,21 @@ const App: React.FC = () => {
   useGameLoop(() => {
     dispatch({ type: "TICK" });
   }, 1000);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        dispatch({ type: "MOVE", direction: "left" });
+      } else if (e.key === "ArrowRight") {
+        dispatch({ type: "MOVE", direction: "right" });
+      } else if (e.key === "ArrowDown") {
+        dispatch({ type: "MOVE", direction: "down" });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <div>
