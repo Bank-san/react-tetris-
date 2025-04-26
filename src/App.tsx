@@ -43,13 +43,13 @@ const App: React.FC = () => {
           dispatch({ type: "MOVE", direction: "down" });
           break;
         case "ArrowUp":
-          dispatch({ type: "ROTATE" });
+          dispatch({ type: "HARD_DROP" });
           break;
         case "Shift":
           dispatch({ type: "HOLD" });
           break;
         case " ":
-          dispatch({ type: "HARD_DROP" });
+          dispatch({ type: "ROTATE" });
           break;
       }
     };
