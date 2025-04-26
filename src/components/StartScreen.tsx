@@ -8,31 +8,44 @@ const StartScreen: React.FC<Props> = ({ onStart }) => {
   return (
     <div
       style={{
-        width: "100%",
-        height: "100%",
+        height: "100vh",
         backgroundColor: "#111",
-        color: "#fff",
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
-        textAlign: "center",
-        gap: "1rem",
+        alignItems: "center",
+        color: "#fff",
       }}
     >
-      <h1>React Tetris</h1>
-      <p>【操作方法】</p>
-      <p>← →：移動</p>
-      <p>↓：ソフトドロップ</p>
-      <p>↑：ハードドロップ</p>
-      <p>スペース：回転</p>
-      <p>Shift：ホールド</p>
+      <h1 style={{ fontSize: "3rem", marginBottom: "2rem" }}>React Tetris</h1>
       <button
         onClick={onStart}
-        style={{ padding: "10px 20px", fontSize: "18px" }}
+        style={{
+          padding: "1rem 2rem",
+          fontSize: "1.5rem",
+          backgroundColor: "#4f46e5",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+          transition: "transform 0.2s, background-color 0.2s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        ゲームスタート！
+        Start Game
       </button>
+
+      <div style={{ marginTop: "2rem", fontSize: "1rem", color: "#aaa" }}>
+        <p>操作方法：</p>
+        <p>← → 移動</p>
+        <p>↓ ソフトドロップ</p>
+        <p>Space 回転</p>
+        <p>↑ ハードドロップ</p>
+        <p>Shift ホールド</p>
+
+        <p>▶ Enterキーまたはボタンクリックでスタート！</p>
+      </div>
     </div>
   );
 };

@@ -28,6 +28,26 @@ export const initialGameState: GameState = {
 
 export function gameReducer(state: GameState, action: Action): GameState {
   switch (action.type) {
+    case "START": {
+      const queue = [...generateQueue(), ...generateQueue()];
+      return {
+        ...initialGameState,
+        board: Array(20)
+          .fill(null)
+          .map(() => Array(10).fill(0)),
+        position: { x: 3, y: 0 },
+        currentPiece: TETROMINOES[queue[0]],
+        queue: queue.slice(1),
+        isGameOver: false,
+        holdPiece: null,
+        holdUsed: false,
+        score: 0,
+        lines: 0,
+        level: 1,
+        time: 0,
+      };
+    }
+
     case "TICK": {
       if (!state.currentPiece) return state;
 

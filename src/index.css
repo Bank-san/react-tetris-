@@ -71,3 +71,41 @@ body,
     background-color: #f9f9f9;
   }
 }
+/* --- スタート画面用スタイル --- */
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #111;
+  color: #fff;
+  text-align: center;
+}
+
+.start-screen h1 {
+  font-size: 48px;
+  margin-bottom: 2rem;
+}
+
+.start-screen p {
+  font-size: 20px;
+  margin: 0.5rem 0;
+}
+
+.start-screen .start-hint {
+  margin-top: 2rem;
+  font-size: 22px;
+  color: #0ff;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

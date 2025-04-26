@@ -23,4 +23,5 @@ export type Action =
   | { type: "HOLD" }
   | { type: "HARD_DROP" }
   | { type: "TIME_TICK" }
-  | { type: "START_GAME" };
+  | { type: "START_GAME" }
+  | { type: "START" };
