@@ -1,7 +1,7 @@
 import { Tetromino } from "../types/Tetromino";
 
 export function canMove(
-  board: (string | 0)[][],
+  board: (string | number)[][],
   piece: Tetromino,
   position: { x: number; y: number }
 ): boolean {

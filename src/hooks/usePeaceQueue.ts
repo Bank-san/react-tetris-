@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TETROMINOES } from "../data/tetrominoes";
+import { TETROMINOES } from "../data/Tetrominoes";
 import { Tetromino } from "../types/Tetromino";
 
 const TETROMINO_KEYS = Object.keys(TETROMINOES);

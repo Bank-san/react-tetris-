@@ -48,7 +48,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
                 boardX >= 0 &&
                 boardX < newBoard[0].length
               ) {
-                newBoard[boardY][boardX] = state.currentPiece.color;
+                newBoard[boardY][boardX] = state.currentPiece!.color;
               }
             }
           });
@@ -191,7 +191,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
               boardX >= 0 &&
               boardX < newBoard[0].length
             ) {
-              newBoard[boardY][boardX] = state.currentPiece.color;
+              newBoard[boardY][boardX] = state.currentPiece!.color;
             }
           }
         });

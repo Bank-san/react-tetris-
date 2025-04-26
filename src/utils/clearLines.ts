@@ -1,8 +1,8 @@
-export function clearLines(board: (string | 0)[][]): {
-  newBoard: (string | 0)[][];
+export function clearLines(board: (string | number)[][]): {
+  newBoard: (string | number)[][];
   cleared: number;
 } {
-  const isComplete = (row: (string | 0)[]) =>
+  const isComplete = (row: (string | number)[]) =>
     row.every((cell) => typeof cell === "string" && cell !== "");
 
   const remainingRows = board.filter((row) => !isComplete(row));

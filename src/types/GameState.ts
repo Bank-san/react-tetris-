@@ -1,7 +1,7 @@
 import { Tetromino } from "./Tetromino";
 
 export type GameState = {
-  board: (string | 0)[][]; // ← 色付きにする（0 or '#ff0000'など）
+  board: (string | number)[][]; // ← 色付きにする（0 or '#ff0000'など）
   currentPiece: Tetromino | null;
   position: { x: number; y: number };
   isGameOver: boolean;

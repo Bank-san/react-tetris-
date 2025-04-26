@@ -2,7 +2,7 @@ import { Tetromino } from "../types/Tetromino";
 import { canMove } from "./canMove";
 
 export function getGhostPosition(
-  board: (string | 0)[][],
+  board: (string | number)[][],
   piece: Tetromino,
   position: { x: number; y: number }
 ): { x: number; y: number } {
