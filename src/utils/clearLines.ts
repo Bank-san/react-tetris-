@@ -3,7 +3,7 @@ export function clearLines(board: (string | 0)[][]): {
   cleared: number;
 } {
   const isComplete = (row: (string | 0)[]) =>
-    row.every((cell) => typeof cell === "string");
+    row.every((cell) => typeof cell === "string" && cell !== "");
 
   const remainingRows = board.filter((row) => !isComplete(row));
 
@@ -16,5 +16,5 @@ export function clearLines(board: (string | 0)[][]): {
     ...remainingRows,
   ];
 
-  return { newBoard, cleared: cleared || 0 };
+  return { newBoard, cleared };
 }

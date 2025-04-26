@@ -4,6 +4,7 @@ import NextPiece from "./components/NextPiece";
 import { gameReducer, initialGameState } from "./reducers/gameReducer";
 import { useGameLoop } from "./hooks/useGameLoop";
 import { TETROMINOES } from "./data/Tetrominoes";
+import NextPieceSimple from "./components/NextPieceSimple";
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
@@ -55,7 +56,7 @@ const App: React.FC = () => {
       </div>
       <div>
         <h2>next</h2>
-        {nextTetromino && <NextPiece tetromino={nextTetromino} />}
+        {nextKey && <NextPieceSimple type={nextKey} />}
       </div>
     </div>
   );
