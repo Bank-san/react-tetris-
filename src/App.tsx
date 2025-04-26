@@ -37,8 +37,13 @@ const App: React.FC = () => {
           dispatch({ type: "ROTATE" });
           break;
         case "Shift":
-          e.preventDefault(); // 🆕 ここ超大事！
+          e.preventDefault();
           dispatch({ type: "HOLD" });
+          break;
+        case " ":
+        case "Spacebar": // 🛡️ ← ここ追加！！
+          e.preventDefault();
+          dispatch({ type: "HARD_DROP" });
           break;
         default:
           break;

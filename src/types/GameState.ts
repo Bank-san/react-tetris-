@@ -16,4 +16,5 @@ export type Action =
   | { type: "MOVE"; direction: "left" | "right" | "down" } // 横or下に動く
   | { type: "ROTATE" } // 回転
   | { type: "NEW_PIECE" } // 新しいピース出現
-  | { type: "HOLD" };
+  | { type: "HOLD" }
+  | { type: "HARD_DROP" };

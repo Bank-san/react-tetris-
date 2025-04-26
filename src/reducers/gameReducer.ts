@@ -5,6 +5,7 @@ import { clearLines } from "../utils/clearLines";
 import { rotate } from "../utils/rotate";
 import { generateQueue } from "../utils/generateQueue";
 import { TETROMINOES } from "../data/Tetrominoes";
+import { getGhostPosition } from "../utils/getGhostPosition";
 
 const queue = generateQueue();
 
@@ -165,6 +166,61 @@ export function gameReducer(state: GameState, action: Action): GameState {
           holdUsed: true,
         };
       }
+    }
+    case "HARD_DROP": {
+      if (!state.currentPiece) return state;
+
+      const ghostPos = getGhostPosition(
+        state.board,
+        state.currentPiece,
+        state.position
+      );
+      const newPosition = { x: ghostPos.x, y: ghostPos.y };
+
+      const newBoard = [...state.board.map((row) => [...row])];
+      const { shape } = state.currentPiece;
+
+      shape.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value) {
+            const boardY = newPosition.y + y;
+            const boardX = newPosition.x + x;
+            if (
+              boardY >= 0 &&
+              boardY < newBoard.length &&
+              boardX >= 0 &&
+              boardX < newBoard[0].length
+            ) {
+              newBoard[boardY][boardX] = state.currentPiece.color;
+            }
+          }
+        });
+      });
+
+      const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
+      const scoreDelta = cleared * 100;
+
+      let newQueue = [...state.queue];
+      if (newQueue.length <= 1) {
+        newQueue = [...newQueue, ...generateQueue()];
+      }
+      const nextKey = newQueue[0];
+      const nextPiece = TETROMINOES[nextKey];
+      newQueue = newQueue.slice(1);
+
+      const startPos = { x: 3, y: 0 };
+      const gameOver = !canMove(clearedBoard, nextPiece, startPos);
+
+      return {
+        ...state,
+        board: clearedBoard,
+        currentPiece: gameOver ? null : nextPiece,
+        position: startPos,
+        isGameOver: gameOver,
+        score: state.score + scoreDelta,
+        queue: newQueue,
+        holdUsed: false,
+      };
     }
   }
 }
