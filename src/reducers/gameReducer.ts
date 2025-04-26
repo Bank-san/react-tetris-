@@ -17,6 +17,8 @@ export const initialGameState: GameState = {
   queue: queue.slice(1),
   isGameOver: false,
   score: 0,
+  holdPiece: null,
+  holdUsed: false,
 };
 
 export function gameReducer(state: GameState, action: Action): GameState {
@@ -72,6 +74,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
           isGameOver: gameOver,
           score: state.score + scoreDelta, //スコア加算処理
           queue: newQueue,
+          holdUsed: false,
         };
       }
     }
@@ -121,6 +124,46 @@ export function gameReducer(state: GameState, action: Action): GameState {
         };
       } else {
         return state; // 回転できなければ無視
+      }
+    }
+    case "HOLD": {
+      if (!state.currentPiece || state.holdUsed) {
+        console.log("Hold無効: すでに使用済みかピースなし");
+        return state;
+      }
+
+      if (state.holdPiece) {
+        console.log(
+          "Hold交換：",
+          state.holdPiece.name,
+          "<->",
+          state.currentPiece.name
+        );
+        return {
+          ...state,
+          currentPiece: state.holdPiece,
+          holdPiece: state.currentPiece,
+          position: { x: 3, y: 0 },
+          holdUsed: true,
+        };
+      } else {
+        console.log("Hold初回：", state.currentPiece.name);
+        const newQueue = [...state.queue];
+        if (newQueue.length <= 1) {
+          newQueue.push(...generateQueue());
+        }
+        const nextKey = newQueue[0];
+        newQueue.shift();
+        const nextPiece = TETROMINOES[nextKey];
+
+        return {
+          ...state,
+          currentPiece: nextPiece,
+          holdPiece: state.currentPiece,
+          position: { x: 3, y: 0 },
+          queue: newQueue,
+          holdUsed: true,
+        };
       }
     }
   }

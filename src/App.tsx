@@ -1,9 +1,9 @@
 import React, { useReducer, useEffect } from "react";
 import TetrisBoard from "./components/TetrisBoard";
-import NextPiece from "./components/NextPiece";
+
 import { gameReducer, initialGameState } from "./reducers/gameReducer";
 import { useGameLoop } from "./hooks/useGameLoop";
-import { TETROMINOES } from "./data/Tetrominoes";
+
 import NextPieceSimple from "./components/NextPieceSimple";
 
 const App: React.FC = () => {
@@ -21,16 +21,24 @@ const App: React.FC = () => {
 
       switch (e.key) {
         case "ArrowLeft":
+          e.preventDefault();
           dispatch({ type: "MOVE", direction: "left" });
           break;
         case "ArrowRight":
+          e.preventDefault();
           dispatch({ type: "MOVE", direction: "right" });
           break;
         case "ArrowDown":
+          e.preventDefault();
           dispatch({ type: "MOVE", direction: "down" });
           break;
         case "ArrowUp":
+          e.preventDefault();
           dispatch({ type: "ROTATE" });
+          break;
+        case "Shift":
+          e.preventDefault(); // 🆕 ここ超大事！
+          dispatch({ type: "HOLD" });
           break;
         default:
           break;
@@ -44,7 +52,6 @@ const App: React.FC = () => {
   }, [state.isGameOver]);
 
   const nextKey = state.queue[0];
-  const nextTetromino = TETROMINOES[nextKey];
 
   return (
     <div style={{ display: "flex", gap: "2rem" }}>
@@ -57,6 +64,28 @@ const App: React.FC = () => {
       <div>
         <h2>next</h2>
         {nextKey && <NextPieceSimple type={nextKey} />}
+
+        <h2>hold</h2>
+        {state.holdPiece ? (
+          <NextPieceSimple type={state.holdPiece.name} />
+        ) : (
+          <div
+            style={{
+              width: "80px",
+              height: "80px",
+              backgroundColor: "#222",
+              border: "2px solid #888",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "8px",
+              color: "#666",
+              fontSize: "14px",
+            }}
+          >
+            EMPTY
+          </div>
+        )}
       </div>
     </div>
   );
