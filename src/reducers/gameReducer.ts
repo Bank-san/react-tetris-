@@ -7,7 +7,7 @@ import { generateQueue } from "../utils/generateQueue";
 import { TETROMINOES } from "../data/Tetrominoes";
 import { getGhostPosition } from "../utils/getGhostPosition";
 
-const queue = generateQueue();
+const queue = [...generateQueue(), ...generateQueue()];
 
 export const initialGameState: GameState = {
   board: Array(20)
@@ -58,8 +58,8 @@ export function gameReducer(state: GameState, action: Action): GameState {
         const scoreDelta = cleared * 100; //消した行数 × 100点
 
         let newQueue = [...state.queue];
-        if (newQueue.length <= 1) {
-          newQueue = [...newQueue, ...generateQueue()];
+        if (newQueue.length === 7) {
+          newQueue.push(...generateQueue());
         }
         const nextKey = newQueue[0];
         newQueue = newQueue.slice(1);
@@ -150,7 +150,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
       } else {
         console.log("Hold初回：", state.currentPiece.name);
         const newQueue = [...state.queue];
-        if (newQueue.length <= 1) {
+        if (newQueue.length === 7) {
           newQueue.push(...generateQueue());
         }
         const nextKey = newQueue[0];
@@ -201,8 +201,8 @@ export function gameReducer(state: GameState, action: Action): GameState {
       const scoreDelta = cleared * 100;
 
       let newQueue = [...state.queue];
-      if (newQueue.length <= 1) {
-        newQueue = [...newQueue, ...generateQueue()];
+      if (newQueue.length === 7) {
+        newQueue.push(...generateQueue());
       }
       const nextKey = newQueue[0];
       const nextPiece = TETROMINOES[nextKey];
