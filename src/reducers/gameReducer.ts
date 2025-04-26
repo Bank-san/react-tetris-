@@ -1,10 +1,10 @@
 import { GameState, Action } from "../types/GameState";
 import { canMove } from "../utils/canMove";
 import { clearLines } from "../utils/clearLines";
-import { rotate } from "../utils/rotate";
 import { generateQueue } from "../utils/generateQueue";
 import { TETROMINOES } from "../data/Tetrominoes";
 import { getGhostPosition } from "../utils/getGhostPosition";
+import { rotateRight, rotateLeft } from "../utils/rotate"; // 2つimport！
 
 // 最初に7個 ×2 を用意
 const queue = [...generateQueue(), ...generateQueue()];
@@ -129,10 +129,29 @@ export function gameReducer(state: GameState, action: Action): GameState {
       }
     }
 
-    case "ROTATE": {
+    case "LEFT_ROTATE": {
       if (!state.currentPiece) return state;
 
-      const rotatedShape = rotate(state.currentPiece.shape);
+      const rotatedShape = rotateLeft(state.currentPiece.shape);
+      const rotatedPiece = {
+        ...state.currentPiece,
+        shape: rotatedShape,
+      };
+
+      if (canMove(state.board, rotatedPiece, state.position)) {
+        return {
+          ...state,
+          currentPiece: rotatedPiece,
+        };
+      } else {
+        return state;
+      }
+    }
+
+    case "RIGHT_ROTATE": {
+      if (!state.currentPiece) return state;
+
+      const rotatedShape = rotateRight(state.currentPiece.shape);
       const rotatedPiece = {
         ...state.currentPiece,
         shape: rotatedShape,
