@@ -17,6 +17,7 @@ export const initialGameState: GameState = {
   currentPiece: TETROMINOES[queue[0]],
   queue: queue.slice(1),
   isGameOver: false,
+  isStarted: false,
   score: 0,
   holdPiece: null,
   holdUsed: false,
@@ -223,6 +224,12 @@ export function gameReducer(state: GameState, action: Action): GameState {
       return {
         ...state,
         time: state.time + 1,
+      };
+    }
+    case "START_GAME": {
+      return {
+        ...initialGameState,
+        isStarted: true,
       };
     }
 

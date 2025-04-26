@@ -5,6 +5,7 @@ export type GameState = {
   currentPiece: Tetromino | null;
   position: { x: number; y: number };
   isGameOver: boolean;
+  isStarted: boolean;
   score: number;
   queue: string[];
   holdPiece: Tetromino | null;
@@ -21,4 +22,5 @@ export type Action =
   | { type: "NEW_PIECE" } // 新しいピース出現
   | { type: "HOLD" }
   | { type: "HARD_DROP" }
-  | { type: "TIME_TICK" };
+  | { type: "TIME_TICK" }
+  | { type: "START_GAME" };
