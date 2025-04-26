@@ -1,38 +1,62 @@
 import React, { useReducer, useEffect } from "react";
 import TetrisBoard from "./components/TetrisBoard";
+import NextPiece from "./components/NextPiece";
 import { gameReducer, initialGameState } from "./reducers/gameReducer";
 import { useGameLoop } from "./hooks/useGameLoop";
+import { TETROMINOES } from "./data/Tetrominoes";
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
 
   useGameLoop(() => {
-    dispatch({ type: "TICK" });
+    if (!state.isGameOver) {
+      dispatch({ type: "TICK" });
+    }
   }, 1000);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") {
-        dispatch({ type: "MOVE", direction: "left" });
-      } else if (e.key === "ArrowRight") {
-        dispatch({ type: "MOVE", direction: "right" });
-      } else if (e.key === "ArrowDown") {
-        dispatch({ type: "MOVE", direction: "down" });
-      } else if (e.key === "ArrowUp") {
-        dispatch({ type: "ROTATE" });
+      if (state.isGameOver) return;
+
+      switch (e.key) {
+        case "ArrowLeft":
+          dispatch({ type: "MOVE", direction: "left" });
+          break;
+        case "ArrowRight":
+          dispatch({ type: "MOVE", direction: "right" });
+          break;
+        case "ArrowDown":
+          dispatch({ type: "MOVE", direction: "down" });
+          break;
+        case "ArrowUp":
+          dispatch({ type: "ROTATE" });
+          break;
+        default:
+          break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [state.isGameOver]);
+
+  const nextKey = state.queue[0];
+  const nextTetromino = TETROMINOES[nextKey];
 
   return (
-    <div>
-      <h1>React Tetris</h1>
-      <h2>Score: {state.score}</h2>
-      {state.isGameOver && <h2 style={{ color: "red" }}>💀 GAME OVER 💀</h2>}
-      <TetrisBoard gameState={state} />
+    <div style={{ display: "flex", gap: "2rem" }}>
+      <div>
+        <h1>React Tetris</h1>
+        <h2>Score: {state.score}</h2>
+        {state.isGameOver && <h2 style={{ color: "red" }}>💀 GAME OVER 💀</h2>}
+        <TetrisBoard gameState={state} />
+      </div>
+      <div>
+        <h2>next</h2>
+        {nextTetromino && <NextPiece tetromino={nextTetromino} />}
+      </div>
     </div>
   );
 };

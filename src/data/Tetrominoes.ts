@@ -3,10 +3,10 @@ import { Tetromino } from "../types/Tetromino";
 export const TETROMINOES: Record<string, Tetromino> = {
   I: {
     shape: [
-      [0, 0, 0, 0],
-      [1, 1, 1, 1],
-      [0, 0, 0, 0],
-      [0, 0, 0, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
+      [0, 1, 0],
     ],
     color: "#00f0f0",
   },
@@ -14,7 +14,6 @@ export const TETROMINOES: Record<string, Tetromino> = {
     shape: [
       [1, 0, 0],
       [1, 1, 1],
-      [0, 0, 0],
     ],
     color: "#0000f0",
   },
@@ -22,7 +21,6 @@ export const TETROMINOES: Record<string, Tetromino> = {
     shape: [
       [0, 0, 1],
       [1, 1, 1],
-      [0, 0, 0],
     ],
     color: "#f0a000",
   },
@@ -37,7 +35,6 @@ export const TETROMINOES: Record<string, Tetromino> = {
     shape: [
       [0, 1, 1],
       [1, 1, 0],
-      [0, 0, 0],
     ],
     color: "#00f000",
   },
@@ -45,7 +42,6 @@ export const TETROMINOES: Record<string, Tetromino> = {
     shape: [
       [0, 1, 0],
       [1, 1, 1],
-      [0, 0, 0],
     ],
     color: "#a000f0",
   },
@@ -53,7 +49,6 @@ export const TETROMINOES: Record<string, Tetromino> = {
     shape: [
       [1, 1, 0],
       [0, 1, 1],
-      [0, 0, 0],
     ],
     color: "#f00000",
   },
