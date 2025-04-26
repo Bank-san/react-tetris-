@@ -1,5 +1,4 @@
 import { GameState, Action } from "../types/GameState";
-import { getRandomTetromino } from "../utils/randomTetromino";
 import { canMove } from "../utils/canMove";
 import { clearLines } from "../utils/clearLines";
 import { rotate } from "../utils/rotate";
@@ -7,6 +6,7 @@ import { generateQueue } from "../utils/generateQueue";
 import { TETROMINOES } from "../data/Tetrominoes";
 import { getGhostPosition } from "../utils/getGhostPosition";
 
+// 最初に7個 ×2 を用意
 const queue = [...generateQueue(), ...generateQueue()];
 
 export const initialGameState: GameState = {
@@ -28,60 +28,63 @@ export const initialGameState: GameState = {
 export function gameReducer(state: GameState, action: Action): GameState {
   switch (action.type) {
     case "TICK": {
+      if (!state.currentPiece) return state;
+
       const newPosition = { ...state.position, y: state.position.y + 1 };
-      if (
-        state.currentPiece &&
-        canMove(state.board, state.currentPiece, newPosition)
-      ) {
+
+      if (canMove(state.board, state.currentPiece, newPosition)) {
         return { ...state, position: newPosition };
-      } else {
-        if (!state.currentPiece) return state;
-
-        const newBoard = [...state.board.map((row) => [...row])];
-        const { shape } = state.currentPiece;
-
-        shape.forEach((row, y) => {
-          row.forEach((value, x) => {
-            if (value) {
-              const boardY = state.position.y + y;
-              const boardX = state.position.x + x;
-              if (
-                boardY >= 0 &&
-                boardY < newBoard.length &&
-                boardX >= 0 &&
-                boardX < newBoard[0].length
-              ) {
-                newBoard[boardY][boardX] = state.currentPiece!.color;
-              }
-            }
-          });
-        });
-
-        const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
-        const scoreDelta = cleared * 100; //消した行数 × 100点
-        const linesDelta = cleared;
-
-        let newQueue = [...state.queue];
-        if (newQueue.length === 7) {
-          newQueue.push(...generateQueue());
-        }
-        const nextKey = newQueue[0];
-        newQueue = newQueue.slice(1);
-        const nextPiece = TETROMINOES[nextKey];
-        const startPos = { x: 3, y: 0 };
-        const gameOver = !canMove(clearedBoard, nextPiece, startPos);
-
-        return {
-          ...state,
-          board: clearedBoard,
-          currentPiece: gameOver ? null : nextPiece,
-          position: startPos,
-          isGameOver: gameOver,
-          score: state.score + scoreDelta, //スコア加算処理
-          queue: newQueue,
-          holdUsed: false,
-        };
       }
+
+      // 落下できなかったら固定
+      const newBoard = [...state.board.map((row) => [...row])];
+      const { shape } = state.currentPiece;
+
+      shape.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value) {
+            const boardY = state.position.y + y;
+            const boardX = state.position.x + x;
+            if (
+              boardY >= 0 &&
+              boardY < newBoard.length &&
+              boardX >= 0 &&
+              boardX < newBoard[0].length
+            ) {
+              newBoard[boardY][boardX] = state.currentPiece!.color;
+            }
+          }
+        });
+      });
+
+      const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
+      const scoreDelta = cleared * 100;
+      const newLines = state.lines + cleared;
+      const newLevel = Math.floor(newLines / 10) + 1;
+
+      let newQueue = [...state.queue];
+      if (newQueue.length === 7) {
+        newQueue.push(...generateQueue());
+      }
+      const nextKey = newQueue[0];
+      const nextPiece = TETROMINOES[nextKey];
+      newQueue = newQueue.slice(1);
+
+      const startPos = { x: 3, y: 0 };
+      const gameOver = !canMove(clearedBoard, nextPiece, startPos);
+
+      return {
+        ...state,
+        board: clearedBoard,
+        currentPiece: gameOver ? null : nextPiece,
+        position: startPos,
+        isGameOver: gameOver,
+        score: state.score + scoreDelta,
+        queue: newQueue,
+        holdUsed: false,
+        lines: newLines,
+        level: newLevel,
+      };
     }
 
     case "MOVE": {
@@ -94,6 +97,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
         x: state.position.x + delta.x,
         y: state.position.y + delta.y,
       };
+
       if (
         state.currentPiece &&
         canMove(state.board, state.currentPiece, newPosition)
@@ -103,14 +107,6 @@ export function gameReducer(state: GameState, action: Action): GameState {
         return state;
       }
     }
-    case "NEW_PIECE":
-      return {
-        ...state,
-        currentPiece: getRandomTetromino(),
-        position: { x: 3, y: 0 },
-      };
-    default:
-      return state;
 
     case "ROTATE": {
       if (!state.currentPiece) return state;
@@ -121,29 +117,22 @@ export function gameReducer(state: GameState, action: Action): GameState {
         shape: rotatedShape,
       };
 
-      // 衝突判定（位置そのままで回転できるか）
       if (canMove(state.board, rotatedPiece, state.position)) {
         return {
           ...state,
           currentPiece: rotatedPiece,
         };
       } else {
-        return state; // 回転できなければ無視
+        return state;
       }
     }
+
     case "HOLD": {
       if (!state.currentPiece || state.holdUsed) {
-        console.log("Hold無効: すでに使用済みかピースなし");
         return state;
       }
 
       if (state.holdPiece) {
-        console.log(
-          "Hold交換：",
-          state.holdPiece.name,
-          "<->",
-          state.currentPiece.name
-        );
         return {
           ...state,
           currentPiece: state.holdPiece,
@@ -152,14 +141,13 @@ export function gameReducer(state: GameState, action: Action): GameState {
           holdUsed: true,
         };
       } else {
-        console.log("Hold初回：", state.currentPiece.name);
-        const newQueue = [...state.queue];
+        let newQueue = [...state.queue];
         if (newQueue.length === 7) {
           newQueue.push(...generateQueue());
         }
         const nextKey = newQueue[0];
-        newQueue.shift();
         const nextPiece = TETROMINOES[nextKey];
+        newQueue = newQueue.slice(1);
 
         return {
           ...state,
@@ -171,6 +159,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
         };
       }
     }
+
     case "HARD_DROP": {
       if (!state.currentPiece) return state;
 
@@ -225,13 +214,19 @@ export function gameReducer(state: GameState, action: Action): GameState {
         score: state.score + scoreDelta,
         queue: newQueue,
         holdUsed: false,
+        lines: state.lines + linesDelta,
+        level: Math.floor((state.lines + linesDelta) / 10) + 1,
       };
     }
+
     case "TIME_TICK": {
       return {
         ...state,
         time: state.time + 1,
       };
     }
+
+    default:
+      return state;
   }
 }

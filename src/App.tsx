@@ -1,30 +1,40 @@
 import React, { useReducer, useEffect } from "react";
-import TetrisBoard from "./components/TetrisBoard";
 import { gameReducer, initialGameState } from "./reducers/gameReducer";
-import { useGameLoop } from "./hooks/useGameLoop";
 import HoldPiece from "./components/HoldPiece";
 import NextPieces from "./components/NextPieces";
 import GameStats from "./components/GameStats";
+import TetrisBoard from "./components/TetrisBoard";
 
 const App: React.FC = () => {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
 
-  useGameLoop(() => {
-    if (!state.isGameOver) {
-      dispatch({ type: "TICK" });
-    }
-  }, 1000);
+  // ← ここ！落下速度はレベルによって決める
+  const speed = Math.max(1000 - (state.level - 1) * 100, 100);
 
+  // ピース落下タイマー
   useEffect(() => {
     if (state.isGameOver) return;
 
-    const timer = setInterval(() => {
-      dispatch({ type: "TIME_TICK" });
-    }, 1000); // 1秒ごとに time +1
+    const fallTimer = setInterval(() => {
+      dispatch({ type: "TICK" });
+    }, speed);
 
-    return () => clearInterval(timer);
+    return () => clearInterval(fallTimer);
+  }, [state.isGameOver, state.level]);
+  // ← ここもポイント。levelが変わったら速度リセットする！
+
+  // 経過時間タイマー
+  useEffect(() => {
+    if (state.isGameOver) return;
+
+    const timeTimer = setInterval(() => {
+      dispatch({ type: "TIME_TICK" });
+    }, 1000);
+
+    return () => clearInterval(timeTimer);
   }, [state.isGameOver]);
 
+  // キー操作
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (state.isGameOver) return;
@@ -61,26 +71,24 @@ const App: React.FC = () => {
 
   return (
     <div style={{ display: "flex", justifyContent: "center", gap: "3rem" }}>
-      {/* --- 左：HOLD --- */}
+      {/* 左: HOLD */}
       <div>
         <h2>HOLD</h2>
         <HoldPiece piece={holdPiece} />
       </div>
 
-      {/* --- 中央：メインボード --- */}
+      {/* 中央: メインボード */}
       <div>
         <h1 style={{ color: "#fff" }}>React Tetris</h1>
         <TetrisBoard gameState={state} />
       </div>
 
-      {/* --- 右：NEXTとSTATS --- */}
+      {/* 右: NEXTとSTATS */}
       <div>
         <h2>NEXT</h2>
         <NextPieces queue={queue} />
 
         <h2>STATS</h2>
-        <h2>Time: {state.time}s</h2>
-
         <GameStats lines={lines} level={level} time={time} score={score} />
       </div>
     </div>
