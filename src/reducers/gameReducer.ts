@@ -20,6 +20,9 @@ export const initialGameState: GameState = {
   score: 0,
   holdPiece: null,
   holdUsed: false,
+  lines: 0,
+  level: 1,
+  time: 0,
 };
 
 export function gameReducer(state: GameState, action: Action): GameState {
@@ -56,6 +59,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
         const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
         const scoreDelta = cleared * 100; //消した行数 × 100点
+        const linesDelta = cleared;
 
         let newQueue = [...state.queue];
         if (newQueue.length === 7) {
@@ -199,6 +203,7 @@ export function gameReducer(state: GameState, action: Action): GameState {
 
       const { newBoard: clearedBoard, cleared } = clearLines(newBoard);
       const scoreDelta = cleared * 100;
+      const linesDelta = cleared;
 
       let newQueue = [...state.queue];
       if (newQueue.length === 7) {
@@ -220,6 +225,12 @@ export function gameReducer(state: GameState, action: Action): GameState {
         score: state.score + scoreDelta,
         queue: newQueue,
         holdUsed: false,
+      };
+    }
+    case "TIME_TICK": {
+      return {
+        ...state,
+        time: state.time + 1,
       };
     }
   }

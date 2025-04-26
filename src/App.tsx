@@ -16,6 +16,16 @@ const App: React.FC = () => {
   }, 1000);
 
   useEffect(() => {
+    if (state.isGameOver) return;
+
+    const timer = setInterval(() => {
+      dispatch({ type: "TIME_TICK" });
+    }, 1000); // 1秒ごとに time +1
+
+    return () => clearInterval(timer);
+  }, [state.isGameOver]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (state.isGameOver) return;
 
@@ -38,6 +48,8 @@ const App: React.FC = () => {
         case " ":
           dispatch({ type: "HARD_DROP" });
           break;
+        default:
+          break;
       }
     };
 
@@ -45,7 +57,7 @@ const App: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [state.isGameOver]);
 
-  const { holdPiece, queue, score } = state;
+  const { holdPiece, queue, score, lines, level, time } = state;
 
   return (
     <div style={{ display: "flex", justifyContent: "center", gap: "3rem" }}>
@@ -65,12 +77,11 @@ const App: React.FC = () => {
       <div>
         <h2>NEXT</h2>
         <NextPieces queue={queue} />
-        <GameStats
-          lines={0} // ← あとでステート追加してOK
-          level={1} // ← ここも後で
-          time={0} // ← タイマー機能追加で入れる
-          score={score}
-        />
+
+        <h2>STATS</h2>
+        <h2>Time: {state.time}s</h2>
+
+        <GameStats lines={lines} level={level} time={time} score={score} />
       </div>
     </div>
   );

@@ -9,6 +9,9 @@ export type GameState = {
   queue: string[];
   holdPiece: Tetromino | null;
   holdUsed: boolean;
+  lines: number;
+  level: number;
+  time: number;
 };
 
 export type Action =
@@ -17,4 +20,5 @@ export type Action =
   | { type: "ROTATE" } // 回転
   | { type: "NEW_PIECE" } // 新しいピース出現
   | { type: "HOLD" }
-  | { type: "HARD_DROP" };
+  | { type: "HARD_DROP" }
+  | { type: "TIME_TICK" };
