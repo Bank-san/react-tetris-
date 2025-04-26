@@ -4,7 +4,8 @@ import { clearLines } from "../utils/clearLines";
 import { generateQueue } from "../utils/generateQueue";
 import { TETROMINOES } from "../data/Tetrominoes";
 import { getGhostPosition } from "../utils/getGhostPosition";
-import { rotateRight, rotateLeft } from "../utils/rotate"; // 2つimport！
+import { rotateRight, rotateLeft } from "../utils/rotate";
+import { tryWallKick } from "../utils/WallKick";
 
 // 最初に7個 ×2 を用意
 const queue = [...generateQueue(), ...generateQueue()];
@@ -144,6 +145,18 @@ export function gameReducer(state: GameState, action: Action): GameState {
           currentPiece: rotatedPiece,
         };
       } else {
+        const kickedPosition = tryWallKick(
+          state.board,
+          rotatedPiece,
+          state.position
+        );
+        if (kickedPosition) {
+          return {
+            ...state,
+            currentPiece: rotatedPiece,
+            position: kickedPosition,
+          };
+        }
         return state;
       }
     }
@@ -163,6 +176,18 @@ export function gameReducer(state: GameState, action: Action): GameState {
           currentPiece: rotatedPiece,
         };
       } else {
+        const kickedPosition = tryWallKick(
+          state.board,
+          rotatedPiece,
+          state.position
+        );
+        if (kickedPosition) {
+          return {
+            ...state,
+            currentPiece: rotatedPiece,
+            position: kickedPosition,
+          };
+        }
         return state;
       }
     }
